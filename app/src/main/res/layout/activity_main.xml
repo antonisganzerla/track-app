@@ -25,7 +25,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            android:hint="Selecione ou insira um código"
+            android:hint="@string/et_select_or_input_code"
             android:textStyle="bold" />
 
         <Button
@@ -35,7 +35,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center"
             android:layout_marginTop="20dp"
-            android:text="RASTREAR" />
+            android:text="@string/btn_track" />
 
         <ProgressBar
             android:layout_marginTop="?actionBarSize"
@@ -56,5 +56,5 @@
         android:layout_height="wrap_content"
         android:layout_gravity="end|bottom"
         android:layout_margin="16dp"
-        android:src="@android:drawable/ic_input_add" />
+        android:src="@drawable/package_variant_closed" />
 </FrameLayout>

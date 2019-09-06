@@ -4,7 +4,7 @@
     android:id="@+id/tvCodeItem"
     style="@style/TextAppearance.AppCompat.Medium"
     android:textStyle="bold"
-    android:text="Example"
+    android:text="@string/et_example"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:layout_margin="10dp"

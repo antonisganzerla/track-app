@@ -6,12 +6,6 @@
     android:layout_margin="10dp"
     android:orientation="vertical">
 
-    <ScrollView
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
-
-    </ScrollView>
-
     <androidx.cardview.widget.CardView
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -29,7 +23,7 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 style="@style/TextAppearance.AppCompat.Medium"
-                android:text="Evento"/>
+                android:text="@string/tv_event"/>
 
             <LinearLayout
                 android:layout_width="wrap_content"
@@ -40,7 +34,7 @@
                     style="@style/TextAppearance.AppCompat.Medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Descrição:" />
+                    android:text="@string/tv_description" />
 
                 <TextView
                     android:id="@+id/tvDescricao"
@@ -59,7 +53,7 @@
                     style="@style/TextAppearance.AppCompat.Medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Data:" />
+                    android:text="@string/tv_date" />
 
                 <TextView
                     android:id="@+id/tvData"
@@ -78,7 +72,7 @@
                     style="@style/TextAppearance.AppCompat.Medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Origem:" />
+                    android:text="@string/tv_origin" />
 
                 <TextView
                     android:id="@+id/tvOrigem"
@@ -97,7 +91,7 @@
                     style="@style/TextAppearance.AppCompat.Medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Destino:" />
+                    android:text="@string/tv_destiny" />
 
                 <TextView
                     android:id="@+id/tvDestino"
@@ -116,7 +110,7 @@
                     style="@style/TextAppearance.AppCompat.Medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Cidade:" />
+                    android:text="@string/tv_city" />
 
                 <TextView
                     android:id="@+id/tvCidade"
@@ -135,7 +129,7 @@
                     style="@style/TextAppearance.AppCompat.Medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="UF:" />
+                    android:text="@string/tv_uf" />
 
                 <TextView
                     android:id="@+id/tvUf"
@@ -154,7 +148,7 @@
                     style="@style/TextAppearance.AppCompat.Medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Tipo:" />
+                    android:text="@string/tv_type" />
 
                 <TextView
                     android:id="@+id/tvTipo"
@@ -173,7 +167,7 @@
                     style="@style/TextAppearance.AppCompat.Medium"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
-                    android:text="Status:" />
+                    android:text="@string/tv_status" />
 
                 <TextView
                     android:id="@+id/tvStatus"

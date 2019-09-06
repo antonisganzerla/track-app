@@ -1,3 +1,51 @@
 <resources>
     <string name="app_name">Rastreamento</string>
+
+    <!-- MainActivity -->
+    <string name="msg_enter_code">Informe um código!</string>
+    <string name="msg_search_error">Ocorreu um problema ao buscar as informações</string>
+    <string name="msg_search_fail">Falha ao buscar informações</string>
+    <string name="msg_search_sucess">Informações recuperadas com sucesso</string>
+    <string name="select_code">--- Códigos ---</string>
+    <string name="et_select_or_input_code">Selecione ou insira um código</string>
+    <string name="btn_track">RASTREAR</string>
+
+    <!-- track_object_list_item -->
+    <string name="et_example">Exemplo</string>
+
+    <!-- event_card_view -->
+    <string name="tv_event">Evento</string>
+    <string name="tv_description">Descrição:</string>
+    <string name="tv_date">Data:</string>
+    <string name="tv_origin">Origem:</string>
+    <string name="tv_destiny">Destino:</string>
+    <string name="tv_city">Cidade:</string>
+    <string name="tv_uf">UF:</string>
+    <string name="tv_type">Tipo:</string>
+    <string name="tv_status">Status:</string>
+
+    <!-- postal_object_card_view -->
+    <string name="tv_category">Categoria:</string>
+    <string name="tv_name">Nome:</string>
+    <string name="tv_initials">Sigla:</string>
+
+    <!-- TrackObjectListActivity -->
+    <string name="toolbar_title">Objetos cadastrados</string>
+    <string name="tv_example_code">LB083028640SG</string>
+    <string name="msg_track_object_saved">Objeto criado com sucesso</string>
+
+    <!-- TrackObjectAdapter -->
+    <string name="msg_delete_track_object">Deseja excluir o objeto?</string>
+    <string name="msg_track_object_deleted">Objeto excluído com sucesso</string>
+
+    <!-- dialog_add_track_object -->
+    <string name="dialog_save">Salvar</string>
+    <string name="dialog_title">Atenção</string>
+    <string name="dialog_positive_button">Sim</string>
+    <string name="dialog_negative_button">Cancelar</string>
+    <string name="dialog_add_object_title">Criar objeto</string>
+    <string name="dialog_et_track_object_name">Nome objeto</string>
+    <string name="dialog_et_track_object_code">Código objeto</string>
+    <string name="dialog_et_error">Preencha o campo</string>
+
 </resources>

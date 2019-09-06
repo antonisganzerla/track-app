@@ -1,23 +1,28 @@
 package com.sgztech.rastreamento.view
 
-import android.content.Context
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
-import android.util.Log
 import android.view.View
-import android.view.inputmethod.InputMethodManager
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.appcompat.app.AppCompatActivity
-import com.google.android.material.snackbar.Snackbar
 import com.sgztech.rastreamento.R
 import com.sgztech.rastreamento.api.RetrofitInitializer
+import com.sgztech.rastreamento.core.CoreApplication
+import com.sgztech.rastreamento.extension.*
 import com.sgztech.rastreamento.model.PostalSearch
+import com.sgztech.rastreamento.model.TrackObject
+import com.sgztech.rastreamento.util.SnackBarUtil.show
+import com.sgztech.rastreamento.util.SnackBarUtil.showShort
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.event_card_view.view.*
 import kotlinx.android.synthetic.main.postal_object_card_view.*
 import kotlinx.android.synthetic.main.postal_object_card_view.view.*
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.async
+import kotlinx.coroutines.launch
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -28,22 +33,26 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
         setupSpinner()
         setupEtCode()
         setupFab()
         setupBtnTrack()
     }
 
+    override fun onResume() {
+        super.onResume()
+        loadTrackObjects()
+    }
+
     private fun setupBtnTrack() {
         btnTrack.setOnClickListener {
-            hideKeyBoard()
+            hideKeyBoard(it)
             val code = etCode.text.toString()
             if (code.isEmpty()) {
-                Snackbar.make(it, "Informe um código!", Snackbar.LENGTH_SHORT).show()
+                showShort(it, R.string.msg_enter_code)
             } else {
-                progressBar.visibility = View.VISIBLE
-                cardView.visibility = View.GONE
+                progressBar.visible()
+                cardView.gone()
                 sendRequest(code)
             }
         }
@@ -56,33 +65,26 @@ class MainActivity : AppCompatActivity() {
                 call: Call<PostalSearch>,
                 response: Response<PostalSearch>
             ) {
-                progressBar.visibility = View.GONE
+                progressBar.gone()
                 val postalSearch = response.body()
                 if (postalSearch == null || postalSearch.objeto.isEmpty() || postalSearch.objeto[0].erro != null) {
                     if (postalSearch != null && postalSearch.objeto.isNotEmpty()) {
-                        Snackbar.make(btnTrack, postalSearch.objeto[0].erro, Snackbar.LENGTH_LONG)
-                            .show()
+                        show(btnTrack, postalSearch.objeto[0].erro)
                     } else {
-                        Snackbar.make(
-                            btnTrack,
-                            "OcorreU um problema ao buscar as informações",
-                            Snackbar.LENGTH_LONG
-                        ).show()
+                        show(btnTrack, R.string.msg_search_error)
                     }
                 } else {
                     loadDataOnView(postalSearch)
-                    Snackbar.make(
-                        btnTrack,
-                        "Informações recuperadas com sucesso",
-                        Snackbar.LENGTH_SHORT
-                    ).show()
+                    show(btnTrack, R.string.msg_search_sucess)
                 }
             }
 
             override fun onFailure(call: Call<PostalSearch>, t: Throwable) {
-                progressBar.visibility = View.GONE
-                Snackbar.make(btnTrack, "Falha ao buscar informações", Snackbar.LENGTH_LONG).show()
-                Log.e("onFailure error", t.message)
+                progressBar.visible()
+                show(btnTrack, R.string.msg_search_fail)
+                t.message?.let {
+                    showLog(it)
+                }
             }
         })
     }
@@ -104,12 +106,12 @@ class MainActivity : AppCompatActivity() {
             eventCardView.tvStatus.text = evento.status
             panelCard.addView(eventCardView)
         }
-        cardView.visibility = View.VISIBLE
+        cardView.visible()
     }
 
     private fun setupFab() {
         fab.setOnClickListener {
-            Snackbar.make(it, "fab", Snackbar.LENGTH_SHORT).show()
+            openActivity(TrackObjectListActivity::class.java)
         }
     }
 
@@ -132,11 +134,6 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun setupSpinner() {
-        spinnerCodes.adapter = ArrayAdapter(
-            applicationContext,
-            R.layout.code_list_item,
-            listOf("--- Códigos ---", "LB083028640SG")
-        )
         spinnerCodes.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
 
             override fun onItemSelected(
@@ -145,11 +142,13 @@ class MainActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-                val selectedCode = parent.getItemAtPosition(position).toString()
-                if (selectedCode == "--- Códigos ---") {
+                val selectedObject = parent.getItemAtPosition(position).toString()
+                if (selectedObject == getString(R.string.select_code)) {
                     etCode.setText("")
                 } else {
-                    etCode.setText(selectedCode)
+                    val index = selectedObject.indexOf("-") + 2
+                    val code = selectedObject.substring(index, selectedObject.length)
+                    etCode.setText(code)
                 }
             }
 
@@ -159,9 +158,27 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    private fun hideKeyBoard() {
-        val inputMethodManager =
-            applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
-        inputMethodManager.hideSoftInputFromWindow(btnTrack.windowToken, 0)
+    private fun loadTrackObjects() {
+        GlobalScope.launch(context = Dispatchers.Main) {
+            val trackObjectList = loadCodeList()
+            val list = mutableListOf<String>()
+            list.add(getString(R.string.select_code))
+            for (trackObject in trackObjectList) {
+                list.add(trackObject.name.plus(" - ").plus(trackObject.code))
+            }
+            spinnerCodes.adapter = ArrayAdapter(
+                applicationContext,
+                R.layout.track_object_list_item,
+                list
+            )
+        }
+    }
+
+    private suspend fun loadCodeList(): MutableList<TrackObject> {
+        val result = GlobalScope.async {
+            val dao = CoreApplication.database?.trackObjectDao()
+            dao?.all()
+        }
+        return result.await()?.toMutableList() ?: mutableListOf()
     }
 }
