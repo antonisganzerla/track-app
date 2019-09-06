@@ -4,6 +4,7 @@
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
 
+    <color name="colorOrange">#FF9907</color>
     <color name="backgroundColor">#CDDC39</color>
     <color name="white">#FFFFFF</color>
 </resources>

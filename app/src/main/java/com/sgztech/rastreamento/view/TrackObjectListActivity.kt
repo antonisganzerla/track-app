@@ -52,7 +52,7 @@ class TrackObjectListActivity : AppCompatActivity() {
     }
 
     private fun setupToolbar() {
-        toolbar.title = getString(R.string.toolbar_title)
+        toolbar.title = getString(R.string.toolbar_title_object_track)
         setSupportActionBar(toolbar)
         supportActionBar?.setDisplayHomeAsUpEnabled(true)
     }

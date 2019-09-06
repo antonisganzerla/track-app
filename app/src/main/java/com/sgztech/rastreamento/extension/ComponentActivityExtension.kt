@@ -5,13 +5,13 @@ import android.content.Intent
 import android.util.Log
 import android.view.View
 import android.view.inputmethod.InputMethodManager
-import androidx.appcompat.app.AppCompatActivity
+import androidx.activity.ComponentActivity
 
 fun showLog(message: String) {
     Log.w("TAG_DEBUG", message)
 }
 
-fun AppCompatActivity.openActivity(cls: Class<*>, finish: Boolean = false) {
+fun ComponentActivity.openActivity(cls: Class<*>, finish: Boolean = false) {
     val intent = Intent(this, cls)
     startActivity(intent)
     if(finish){
@@ -19,7 +19,7 @@ fun AppCompatActivity.openActivity(cls: Class<*>, finish: Boolean = false) {
     }
 }
 
-fun AppCompatActivity.hideKeyBoard(view: View) {
+fun ComponentActivity.hideKeyBoard(view: View) {
     val inputMethodManager =
         applicationContext.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
     inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)

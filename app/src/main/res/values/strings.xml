@@ -1,14 +1,25 @@
 <resources>
     <string name="app_name">Rastreamento</string>
 
+    <!-- LoginActivity -->
+    <string name="msg_signin_success">signInResult:success -> %1$s.</string>
+    <string name="msg_signin_fail">signInResult:failed code= %1$s.</string>
+
     <!-- MainActivity -->
+    <string name="toolbar_title_main">Rastrear Objeto</string>
     <string name="msg_enter_code">Informe um código!</string>
     <string name="msg_search_error">Ocorreu um problema ao buscar as informações</string>
     <string name="msg_search_fail">Falha ao buscar informações</string>
     <string name="msg_search_sucess">Informações recuperadas com sucesso</string>
-    <string name="select_code">--- Códigos ---</string>
+    <string name="select_track_object">----- Objetos -----</string>
     <string name="et_select_or_input_code">Selecione ou insira um código</string>
     <string name="btn_track">RASTREAR</string>
+    <string name="msg_logout_success">Logout with success</string>
+    <string name="open_drawer">Abrir</string>
+    <string name="close_drawer">Fechar</string>
+    <string name="dialog_message_logout">Deseja realmente efetuar o logout?</string>
+    <string name="dialog_about_app_title">Sobre o app</string>
+    <string name="dialog_about_app_message">Aplicativo para rastreio de encomendas dos Correios.\n\n Desenvolvido por Antoni Sganzerla.</string>
 
     <!-- track_object_list_item -->
     <string name="et_example">Exemplo</string>
@@ -30,7 +41,7 @@
     <string name="tv_initials">Sigla:</string>
 
     <!-- TrackObjectListActivity -->
-    <string name="toolbar_title">Objetos cadastrados</string>
+    <string name="toolbar_title_object_track">Objetos cadastrados</string>
     <string name="tv_example_code">LB083028640SG</string>
     <string name="msg_track_object_saved">Objeto criado com sucesso</string>
 
@@ -47,5 +58,13 @@
     <string name="dialog_et_track_object_name">Nome objeto</string>
     <string name="dialog_et_track_object_code">Código objeto</string>
     <string name="dialog_et_error">Preencha o campo</string>
+
+    <!-- Menu item drawer -->
+    <string name="menu_item_title">Ajuda</string>
+    <string name="menu_item_about">Sobre o app</string>
+    <string name="menu_item_logout">Sair</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

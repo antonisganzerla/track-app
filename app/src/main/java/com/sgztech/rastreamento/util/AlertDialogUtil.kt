@@ -35,6 +35,7 @@ object AlertDialogUtil {
                 positiveCallBack()
             }
     }
+
     fun buildCustomDialog(context: Context, resourceTitle: Int, view: View): AlertDialog.Builder{
         return buildSimpleDialog(context, resourceTitle)
             .setView(view)
@@ -43,5 +44,12 @@ object AlertDialogUtil {
     fun buildSimpleDialog(context: Context, resourceTitle: Int): AlertDialog.Builder{
         return AlertDialog.Builder(context)
             .setTitle(context.getString(resourceTitle))
+    }
+
+    fun showSimpleDialog(context: Context, resourceTitle: Int, resourceMessage: Int){
+        AlertDialog.Builder(context)
+            .setTitle(context.getString(resourceTitle))
+            .setMessage(context.getString(resourceMessage))
+            .show()
     }
 }

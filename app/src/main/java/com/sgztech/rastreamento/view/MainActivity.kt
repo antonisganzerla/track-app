@@ -1,184 +1,94 @@
 package com.sgztech.rastreamento.view
 
 import android.os.Bundle
-import android.text.Editable
-import android.text.TextWatcher
-import android.view.View
-import android.widget.AdapterView
-import android.widget.ArrayAdapter
+import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.sgztech.rastreamento.R
-import com.sgztech.rastreamento.api.RetrofitInitializer
-import com.sgztech.rastreamento.core.CoreApplication
-import com.sgztech.rastreamento.extension.*
-import com.sgztech.rastreamento.model.PostalSearch
-import com.sgztech.rastreamento.model.TrackObject
-import com.sgztech.rastreamento.util.SnackBarUtil.show
-import com.sgztech.rastreamento.util.SnackBarUtil.showShort
+import com.sgztech.rastreamento.extension.openActivity
+import com.sgztech.rastreamento.util.AlertDialogUtil
+import com.sgztech.rastreamento.util.GoogleSignInUtil.signOut
+import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
-import kotlinx.android.synthetic.main.event_card_view.view.*
-import kotlinx.android.synthetic.main.postal_object_card_view.*
-import kotlinx.android.synthetic.main.postal_object_card_view.view.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
+import kotlinx.android.synthetic.main.nav_header.view.*
+import kotlinx.android.synthetic.main.toolbar.*
 
 
 class MainActivity : AppCompatActivity() {
 
+    private val account: GoogleSignInAccount? by lazy {
+        GoogleSignIn.getLastSignedInAccount(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        setupSpinner()
-        setupEtCode()
-        setupFab()
-        setupBtnTrack()
+        setupToolbar()
+        setupDrawer()
+        openTrackFragment()
     }
 
-    override fun onResume() {
-        super.onResume()
-        loadTrackObjects()
+    private fun setupToolbar() {
+        toolbar.title = getString(R.string.toolbar_title_main)
+        setSupportActionBar(toolbar)
     }
 
-    private fun setupBtnTrack() {
-        btnTrack.setOnClickListener {
-            hideKeyBoard(it)
-            val code = etCode.text.toString()
-            if (code.isEmpty()) {
-                showShort(it, R.string.msg_enter_code)
-            } else {
-                progressBar.visible()
-                cardView.gone()
-                sendRequest(code)
-            }
-        }
+    private fun setupDrawer() {
+        val toggle = ActionBarDrawerToggle(this, drawerLayout, toolbar, R.string.open_drawer, R.string.close_drawer)
+        drawerLayout.addDrawerListener(toggle)
+        toggle.syncState()
+
+        setupDrawerItemClickListener()
+        setupHeaderDrawer()
     }
 
-    private fun sendRequest(code: String) {
-        val call = RetrofitInitializer().service().findObject(code)
-        call.enqueue(object : Callback<PostalSearch> {
-            override fun onResponse(
-                call: Call<PostalSearch>,
-                response: Response<PostalSearch>
-            ) {
-                progressBar.gone()
-                val postalSearch = response.body()
-                if (postalSearch == null || postalSearch.objeto.isEmpty() || postalSearch.objeto[0].erro != null) {
-                    if (postalSearch != null && postalSearch.objeto.isNotEmpty()) {
-                        show(btnTrack, postalSearch.objeto[0].erro)
-                    } else {
-                        show(btnTrack, R.string.msg_search_error)
-                    }
-                } else {
-                    loadDataOnView(postalSearch)
-                    show(btnTrack, R.string.msg_search_sucess)
+    private fun setupDrawerItemClickListener() {
+        navView.setNavigationItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.nav_item_logout -> {
+                    showDialogLogout()
+                }
+                R.id.nav_item_about -> {
+                    AlertDialogUtil.showSimpleDialog(
+                        this,
+                        R.string.dialog_about_app_title,
+                        R.string.dialog_about_app_message
+                    )
                 }
             }
-
-            override fun onFailure(call: Call<PostalSearch>, t: Throwable) {
-                progressBar.visible()
-                show(btnTrack, R.string.msg_search_fail)
-                t.message?.let {
-                    showLog(it)
-                }
-            }
-        })
-    }
-
-    private fun loadDataOnView(postalSearch: PostalSearch) {
-        cardView.tvCategoria.text = postalSearch.objeto[0].categoria
-        cardView.tvNome.text = postalSearch.objeto[0].nome
-        cardView.tvSigla.text = postalSearch.objeto[0].sigla
-        panelCard.removeAllViews()
-        for (evento in postalSearch.objeto[0].evento) {
-            val eventCardView = layoutInflater.inflate(R.layout.event_card_view, null)
-            eventCardView.tvDescricao.text = evento.descricao
-            eventCardView.tvData.text = evento.data.plus(" - ").plus(evento.hora)
-            eventCardView.tvOrigem.text = evento.local
-            eventCardView.tvDestino.text = evento.destino[0].local
-            eventCardView.tvCidade.text = evento.destino[0].cidade
-            eventCardView.tvUf.text = evento.destino[0].uf
-            eventCardView.tvTipo.text = evento.tipo
-            eventCardView.tvStatus.text = evento.status
-            panelCard.addView(eventCardView)
-        }
-        cardView.visible()
-    }
-
-    private fun setupFab() {
-        fab.setOnClickListener {
-            openActivity(TrackObjectListActivity::class.java)
+            drawerLayout.closeDrawer(GravityCompat.START)
+            true
         }
     }
 
-    private fun setupEtCode() {
-        etCode.addTextChangedListener(object : TextWatcher {
-            override fun afterTextChanged(s: Editable?) {
-                // unnecessary implementation
-            }
-
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {
-                // unnecessary implementation
-            }
-
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                if (s?.length == 0) {
-                    spinnerCodes.setSelection(0)
-                }
-            }
-        })
+    private fun showDialogLogout() {
+        val dialog = AlertDialogUtil.create(
+            this,
+            R.string.dialog_message_logout
+        ) {
+            logout()
+        }
+        dialog.show()
     }
 
-    private fun setupSpinner() {
-        spinnerCodes.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
+    private fun logout() {
+        signOut(this)
+        openActivity(LoginActivity::class.java)
+    }
 
-            override fun onItemSelected(
-                parent: AdapterView<*>,
-                view: View,
-                position: Int,
-                id: Long
-            ) {
-                val selectedObject = parent.getItemAtPosition(position).toString()
-                if (selectedObject == getString(R.string.select_code)) {
-                    etCode.setText("")
-                } else {
-                    val index = selectedObject.indexOf("-") + 2
-                    val code = selectedObject.substring(index, selectedObject.length)
-                    etCode.setText(code)
-                }
-            }
-
-            override fun onNothingSelected(parent: AdapterView<*>) {
-                // unnecessary implementation
-            }
+    private fun setupHeaderDrawer() {
+        val headerView = navView.getHeaderView(0)
+        headerView?.let {
+            it.nav_header_name.text = account?.displayName
+            it.nav_header_email.text = account?.email
+            Picasso.get().load(account?.photoUrl).into(it.nav_header_imageView)
         }
     }
 
-    private fun loadTrackObjects() {
-        GlobalScope.launch(context = Dispatchers.Main) {
-            val trackObjectList = loadCodeList()
-            val list = mutableListOf<String>()
-            list.add(getString(R.string.select_code))
-            for (trackObject in trackObjectList) {
-                list.add(trackObject.name.plus(" - ").plus(trackObject.code))
-            }
-            spinnerCodes.adapter = ArrayAdapter(
-                applicationContext,
-                R.layout.track_object_list_item,
-                list
-            )
-        }
-    }
-
-    private suspend fun loadCodeList(): MutableList<TrackObject> {
-        val result = GlobalScope.async {
-            val dao = CoreApplication.database?.trackObjectDao()
-            dao?.all()
-        }
-        return result.await()?.toMutableList() ?: mutableListOf()
+    private fun openTrackFragment(){
+        supportFragmentManager.beginTransaction().replace(R.id.content_frame, TrackFragment(), null)
+            .commitAllowingStateLoss()
     }
 }
