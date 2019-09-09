@@ -51,20 +51,35 @@ class TrackFragment : Fragment() {
         setupFab()
         setupBtnTrack()
         loadTrackObjects()
+        swipe.setOnRefreshListener {
+            if(codeIsValid()){
+                swipe.visible()
+                cardView.gone()
+                sendRequest(etCode.text.toString())
+            }else{
+                swipe.gone()
+            }
+        }
     }
 
     private fun setupBtnTrack() {
         btnTrack.setOnClickListener {
             requireActivity().hideKeyBoard(it)
-            val code = etCode.text.toString()
-            if (code.isEmpty()) {
-                showShort(it, R.string.msg_enter_code)
-            } else {
+            if(codeIsValid()){
                 progressBar.visible()
                 cardView.gone()
-                sendRequest(code)
+                sendRequest(etCode.text.toString())
             }
         }
+    }
+
+    private fun codeIsValid(): Boolean {
+        val code = etCode.text.toString()
+        if (code.isEmpty()) {
+            showShort(btnTrack, R.string.msg_enter_code)
+            return false
+        }
+        return true
     }
 
     private fun sendRequest(code: String) {
@@ -75,6 +90,7 @@ class TrackFragment : Fragment() {
                 response: Response<PostalSearch>
             ) {
                 progressBar.gone()
+                swipe.isRefreshing = false
                 val postalSearch = response.body()
                 if (postalSearch == null || postalSearch.objeto.isEmpty() || postalSearch.objeto[0].erro != null) {
                     if (postalSearch != null && postalSearch.objeto.isNotEmpty()) {
@@ -89,7 +105,8 @@ class TrackFragment : Fragment() {
             }
 
             override fun onFailure(call: Call<PostalSearch>, t: Throwable) {
-                progressBar.visible()
+                progressBar.gone()
+                swipe.gone()
                 show(btnTrack, R.string.msg_search_fail)
                 t.message?.let {
                     showLog(it)
