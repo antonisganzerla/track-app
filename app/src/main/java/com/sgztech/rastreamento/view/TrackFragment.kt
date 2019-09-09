@@ -1,6 +1,7 @@
 package com.sgztech.rastreamento.view
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
 import android.text.TextWatcher
@@ -48,10 +49,6 @@ class TrackFragment : Fragment() {
         setupEtCode()
         setupFab()
         setupBtnTrack()
-    }
-
-    override fun onResume() {
-        super.onResume()
         loadTrackObjects()
     }
 
@@ -122,7 +119,10 @@ class TrackFragment : Fragment() {
 
     private fun setupFab() {
         fab.setOnClickListener {
-            requireActivity().openActivity(TrackObjectListActivity::class.java)
+            startActivityForResult(
+                requireActivity().getIntent(TrackObjectListActivity::class.java),
+                REQUEST_CODE
+            )
         }
     }
 
@@ -193,5 +193,18 @@ class TrackFragment : Fragment() {
         return result.await()?.toMutableList() ?: mutableListOf()
     }
 
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        data?.let {
+            if(requestCode == REQUEST_CODE && data.getBooleanExtra(HAS_CHANGE, false)){
+                loadTrackObjects()
+                cardView.gone()
+            }
+        }
+    }
 
+    companion object{
+        const val REQUEST_CODE = 20
+        const val HAS_CHANGE = "HAS_CHANGE"
+    }
 }

@@ -19,7 +19,7 @@
     <string name="close_drawer">Fechar</string>
     <string name="dialog_message_logout">Deseja realmente efetuar o logout?</string>
     <string name="dialog_about_app_title">Sobre o app</string>
-    <string name="dialog_about_app_message">Aplicativo para rastreio de encomendas dos Correios.\n\n Desenvolvido por Antoni Sganzerla.</string>
+    <string name="dialog_about_app_message">Aplicativo para rastreio de objetos dos Correios.\n\n Desenvolvido por Antoni Sganzerla.</string>
 
     <!-- track_object_list_item -->
     <string name="et_example">Exemplo</string>
@@ -63,8 +63,5 @@
     <string name="menu_item_title">Ajuda</string>
     <string name="menu_item_about">Sobre o app</string>
     <string name="menu_item_logout">Sair</string>
-
-    <!-- TODO: Remove or change this placeholder text -->
-    <string name="hello_blank_fragment">Hello blank fragment</string>
 
 </resources>

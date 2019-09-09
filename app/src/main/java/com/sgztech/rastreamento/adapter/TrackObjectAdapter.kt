@@ -15,10 +15,12 @@ import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
 
 class TrackObjectAdapter(
-    private val list: MutableList<TrackObject>
+    private val list: MutableList<TrackObject>,
+    private val callBack: () -> Unit
 ) : RecyclerView.Adapter<TrackObjectAdapter.TrackObjectViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackObjectViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.track_object_card_view, parent, false)
+        val view = LayoutInflater.from(parent.context)
+            .inflate(R.layout.track_object_card_view, parent, false)
         return TrackObjectViewHolder(view)
     }
 
@@ -32,7 +34,7 @@ class TrackObjectAdapter(
 
 
     inner class TrackObjectViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        fun bind(trackObject: TrackObject, position: Int){
+        fun bind(trackObject: TrackObject, position: Int) {
             itemView.tvObjectCode.text = trackObject.code
             itemView.tvObjectName.text = trackObject.name.plus(" - ")
             itemView.btnDeleteObjectTrack.setOnClickListener {
@@ -50,10 +52,11 @@ class TrackObjectAdapter(
                 list.remove(trackObject)
                 notifyItemRemoved(position)
                 SnackBarUtil.show(itemView, R.string.msg_track_object_deleted)
+                callBack()
             }
         }
 
-        private fun deleteObject(trackObject: TrackObject){
+        private fun deleteObject(trackObject: TrackObject) {
             GlobalScope.launch {
                 val dao = CoreApplication.database?.trackObjectDao()
                 dao?.delete(trackObject)

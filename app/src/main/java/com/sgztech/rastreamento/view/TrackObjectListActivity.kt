@@ -1,5 +1,7 @@
 package com.sgztech.rastreamento.view
 
+import android.app.Activity
+import android.content.Intent
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AlertDialog
@@ -12,6 +14,7 @@ import com.sgztech.rastreamento.extension.validate
 import com.sgztech.rastreamento.model.TrackObject
 import com.sgztech.rastreamento.util.AlertDialogUtil
 import com.sgztech.rastreamento.util.SnackBarUtil.show
+import com.sgztech.rastreamento.view.TrackFragment.Companion.HAS_CHANGE
 import kotlinx.android.synthetic.main.activity_track_object_list.*
 import kotlinx.android.synthetic.main.dialog_add_track_object.view.*
 import kotlinx.android.synthetic.main.toolbar.*
@@ -59,7 +62,7 @@ class TrackObjectListActivity : AppCompatActivity() {
 
     private fun loadData() {
         GlobalScope.launch(context = Dispatchers.Main) {
-            if(::list.isInitialized){
+            if (::list.isInitialized) {
                 list.clear()
             }
             list = loadCodeList()
@@ -77,7 +80,9 @@ class TrackObjectListActivity : AppCompatActivity() {
 
     private fun setupRecyclerView() {
         recycler_view_code_item.let {
-            it.adapter = TrackObjectAdapter(list)
+            it.adapter = TrackObjectAdapter(list) {
+                setupExtra()
+            }
             it.layoutManager = LinearLayoutManager(this)
             it.setHasFixedSize(true)
         }
@@ -110,6 +115,13 @@ class TrackObjectListActivity : AppCompatActivity() {
         loadData()
         show(recycler_view_code_item, R.string.msg_track_object_saved)
         cleanFieldsDialog()
+        setupExtra()
+    }
+
+    private fun setupExtra() {
+        val resultIntent = Intent()
+        resultIntent.putExtra(HAS_CHANGE, true)
+        setResult(Activity.RESULT_OK, resultIntent)
     }
 
     private fun cleanFieldsDialog() {

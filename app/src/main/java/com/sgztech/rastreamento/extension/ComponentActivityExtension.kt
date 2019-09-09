@@ -12,12 +12,16 @@ fun showLog(message: String) {
 }
 
 fun ComponentActivity.openActivity(cls: Class<*>, finish: Boolean = false) {
-    val intent = Intent(this, cls)
-    startActivity(intent)
+    startActivity(getIntent(cls))
     if(finish){
         finish()
     }
 }
+
+fun ComponentActivity.getIntent(cls: Class<*>): Intent{
+    return Intent(this, cls)
+}
+
 
 fun ComponentActivity.hideKeyBoard(view: View) {
     val inputMethodManager =
