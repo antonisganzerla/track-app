@@ -17,6 +17,7 @@ import com.sgztech.rastreamento.core.CoreApplication
 import com.sgztech.rastreamento.extension.*
 import com.sgztech.rastreamento.model.PostalSearch
 import com.sgztech.rastreamento.model.TrackObject
+import com.sgztech.rastreamento.util.GoogleSignInUtil.getAccount
 import com.sgztech.rastreamento.util.SnackBarUtil.show
 import com.sgztech.rastreamento.util.SnackBarUtil.showShort
 import kotlinx.android.synthetic.main.event_card_view.view.*
@@ -188,7 +189,7 @@ class TrackFragment : Fragment() {
     private suspend fun loadCodeList(): MutableList<TrackObject> {
         val result = GlobalScope.async {
             val dao = CoreApplication.database?.trackObjectDao()
-            dao?.all()
+            dao?.allByUser(getUserId())
         }
         return result.await()?.toMutableList() ?: mutableListOf()
     }
@@ -196,14 +197,24 @@ class TrackFragment : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         data?.let {
-            if(requestCode == REQUEST_CODE && data.getBooleanExtra(HAS_CHANGE, false)){
+            if (requestCode == REQUEST_CODE && data.getBooleanExtra(HAS_CHANGE, false)) {
                 loadTrackObjects()
                 cardView.gone()
             }
         }
     }
 
-    companion object{
+    private fun getUserId(): String {
+        return getAccount(requireContext()).let {
+            if (it != null && it.id != null) {
+                it.id!!
+            } else {
+                ""
+            }
+        }
+    }
+
+    companion object {
         const val REQUEST_CODE = 20
         const val HAS_CHANGE = "HAS_CHANGE"
     }

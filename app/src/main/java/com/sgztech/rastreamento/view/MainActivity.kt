@@ -4,11 +4,11 @@ import android.os.Bundle
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
-import com.google.android.gms.auth.api.signin.GoogleSignIn
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.sgztech.rastreamento.R
 import com.sgztech.rastreamento.extension.openActivity
 import com.sgztech.rastreamento.util.AlertDialogUtil
+import com.sgztech.rastreamento.util.GoogleSignInUtil.getAccount
 import com.sgztech.rastreamento.util.GoogleSignInUtil.signOut
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
@@ -19,7 +19,7 @@ import kotlinx.android.synthetic.main.toolbar.*
 class MainActivity : AppCompatActivity() {
 
     private val account: GoogleSignInAccount? by lazy {
-        GoogleSignIn.getLastSignedInAccount(this)
+        getAccount(applicationContext)
     }
 
     override fun onCreate(savedInstanceState: Bundle?) {

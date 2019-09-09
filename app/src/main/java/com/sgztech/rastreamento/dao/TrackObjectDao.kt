@@ -6,8 +6,8 @@ import com.sgztech.rastreamento.model.TrackObject
 @Dao
 interface TrackObjectDao {
 
-    @Query("SELECT * FROM TRACKOBJECT")
-    fun all(): List<TrackObject>
+    @Query("SELECT * FROM TrackObject WHERE idUser LIKE :idUser")
+    fun allByUser(idUser: String): List<TrackObject>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun add(vararg trackObject: TrackObject)
