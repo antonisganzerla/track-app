@@ -9,8 +9,9 @@
         android:layout_height="wrap_content">
 
         <LinearLayout
+            android:id="@+id/panelTrack"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
             android:orientation="vertical">
 
             <Spinner
@@ -18,7 +19,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="?actionBarSize" />
+                android:layout_marginTop="35dp" />
 
             <EditText
                 android:id="@+id/etCode"
@@ -46,13 +47,22 @@
                 android:layout_marginTop="?actionBarSize"
                 android:visibility="invisible" />
 
-            <include
-                android:id="@+id/cardView"
-                layout="@layout/postal_object_card_view"
-                android:visibility="invisible" />
         </LinearLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
 
+
+    <LinearLayout
+        android:layout_gravity="center_vertical"
+        android:layout_width="match_parent"
+        android:layout_marginTop="110dp"
+        android:layout_height="300dp">
+
+        <include
+            android:id="@+id/cardView"
+            layout="@layout/postal_object_card_view"
+            android:visibility="invisible" />
+
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

@@ -6,7 +6,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class RetrofitInitializer {
 
     private val retrofit: Retrofit = Retrofit.Builder()
-        .baseUrl("https://correios.postmon.com.br/webservice/buscaEventos/")
+        .baseUrl("http://rastrojs-api.herokuapp.com/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 

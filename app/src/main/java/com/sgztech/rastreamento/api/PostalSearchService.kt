@@ -3,13 +3,13 @@ package com.sgztech.rastreamento.api
 import com.sgztech.rastreamento.model.PostalSearch
 import retrofit2.Call
 import retrofit2.http.GET
-import retrofit2.http.Query
+import retrofit2.http.Path
 
 interface PostalSearchService {
 
-    @GET("?")
+    @GET("track/{code}")
     fun findObject(
-        @Query("objetos")
+        @Path("code")
         code: String
     ): Call<PostalSearch>
 }

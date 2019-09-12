@@ -26,9 +26,9 @@
 
     <!-- event_card_view -->
     <string name="tv_event">Evento</string>
-    <string name="tv_description">Descrição:</string>
+    <string name="tv_observation">Observação:</string>
     <string name="tv_date">Data:</string>
-    <string name="tv_origin">Origem:</string>
+    <string name="tv_locale">Local:</string>
     <string name="tv_destiny">Destino:</string>
     <string name="tv_city">Cidade:</string>
     <string name="tv_uf">UF:</string>

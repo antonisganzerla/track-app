@@ -92,12 +92,8 @@ class TrackFragment : Fragment() {
                 progressBar.gone()
                 swipe.isRefreshing = false
                 val postalSearch = response.body()
-                if (postalSearch == null || postalSearch.objeto.isEmpty() || postalSearch.objeto[0].erro != null) {
-                    if (postalSearch != null && postalSearch.objeto.isNotEmpty()) {
-                        show(btnTrack, postalSearch.objeto[0].erro)
-                    } else {
-                        show(btnTrack, R.string.msg_search_error)
-                    }
+                if (postalSearch == null) {
+                    show(btnTrack, R.string.msg_search_error)
                 } else {
                     loadDataOnView(postalSearch)
                     show(btnTrack, R.string.msg_search_sucess)
@@ -116,20 +112,14 @@ class TrackFragment : Fragment() {
     }
 
     private fun loadDataOnView(postalSearch: PostalSearch) {
-        cardView.tvCategoria.text = postalSearch.objeto[0].categoria
-        cardView.tvNome.text = postalSearch.objeto[0].nome
-        cardView.tvSigla.text = postalSearch.objeto[0].sigla
+        cardView.tvCategoria.text = postalSearch.code
         panelCard.removeAllViews()
-        for (evento in postalSearch.objeto[0].evento) {
+        for (track in postalSearch.data.tracks) {
             val eventCardView = layoutInflater.inflate(R.layout.event_card_view, null)
-            eventCardView.tvDescricao.text = evento.descricao
-            eventCardView.tvData.text = evento.data.plus(" - ").plus(evento.hora)
-            eventCardView.tvOrigem.text = evento.local
-            eventCardView.tvDestino.text = evento.destino[0].local
-            eventCardView.tvCidade.text = evento.destino[0].cidade
-            eventCardView.tvUf.text = evento.destino[0].uf
-            eventCardView.tvTipo.text = evento.tipo
-            eventCardView.tvStatus.text = evento.status
+            eventCardView.tvStatus.text = track.status
+            eventCardView.tvLocal.text = track.locale
+            eventCardView.tvData.text = track.trackedAt
+            eventCardView.tvObservacao.text = track.observation
             panelCard.addView(eventCardView)
         }
         cardView.visible()
