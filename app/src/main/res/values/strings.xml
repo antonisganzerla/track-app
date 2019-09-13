@@ -65,5 +65,6 @@
     <string name="menu_item_title">Ajuda</string>
     <string name="menu_item_about">Sobre o app</string>
     <string name="menu_item_logout">Sair</string>
+    <string name="menu_title_mainly">Menu</string>
 
 </resources>

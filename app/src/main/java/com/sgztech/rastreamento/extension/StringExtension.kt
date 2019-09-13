@@ -6,16 +6,20 @@ import java.text.SimpleDateFormat
 import java.util.*
 
 
-fun String.toDate(): Date {
-    val dateFormat = SimpleDateFormat("yyyy-mm-dd hh:mm:ss")
+fun String.toDatePtBr(): String {
+    val formatPtBrDate = SimpleDateFormat(PATTERN_PT_BR_DATE, LOCALE)
     return try {
-        val date = this.substring(0, 10).plus(" ").plus(this.substring(11, 19))
-        dateFormat.parse(date)
+        val dateWithTimeZone = SimpleDateFormat(PATTERN_JSON_DATE, LOCALE).parse(this)
+        formatPtBrDate.format(dateWithTimeZone)
     } catch (e: ParseException) {
-        Date()
+        formatPtBrDate.format(Date())
     }
 }
 
 fun String.matchCode(): Boolean{
     return this.matches(Regex(CodeUtil.REGEX_TRACK_CODE))
 }
+
+const val PATTERN_PT_BR_DATE = "dd/MM/yyyy HH:mm"
+const val PATTERN_JSON_DATE = "yyyy-MM-dd'T'HH:mm:ss.SSS'Z'"
+val LOCALE: Locale = Locale.ENGLISH

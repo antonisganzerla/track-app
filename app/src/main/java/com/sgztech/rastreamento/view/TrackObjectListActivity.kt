@@ -3,7 +3,6 @@ package com.sgztech.rastreamento.view
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.text.InputFilter
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -15,6 +14,7 @@ import com.sgztech.rastreamento.core.CoreApplication
 import com.sgztech.rastreamento.extension.validate
 import com.sgztech.rastreamento.model.TrackObject
 import com.sgztech.rastreamento.util.AlertDialogUtil
+import com.sgztech.rastreamento.util.CodeUtil.filter
 import com.sgztech.rastreamento.util.GoogleSignInUtil.getAccount
 import com.sgztech.rastreamento.util.SnackBarUtil.show
 import com.sgztech.rastreamento.view.TrackFragment.Companion.HAS_CHANGE
@@ -104,7 +104,7 @@ class TrackObjectListActivity : AppCompatActivity() {
                 dialog.dismiss()
             }
         }
-        dialogView.etCode.filters = arrayOf<InputFilter>(InputFilter.AllCaps())
+        dialogView.etCode.filters = filter(applicationContext)
     }
 
     private fun setupFab() {

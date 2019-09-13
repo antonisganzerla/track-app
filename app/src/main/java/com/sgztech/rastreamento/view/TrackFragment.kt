@@ -4,7 +4,6 @@ package com.sgztech.rastreamento.view
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
-import android.text.InputFilter
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
@@ -14,13 +13,14 @@ import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.sgztech.rastreamento.R
-import com.sgztech.rastreamento.TrackEventAdapter
+import com.sgztech.rastreamento.adapter.TrackEventAdapter
 import com.sgztech.rastreamento.api.RetrofitInitializer
 import com.sgztech.rastreamento.core.CoreApplication
 import com.sgztech.rastreamento.extension.*
 import com.sgztech.rastreamento.model.PostalSearch
 import com.sgztech.rastreamento.model.Track
 import com.sgztech.rastreamento.model.TrackObject
+import com.sgztech.rastreamento.util.CodeUtil.filter
 import com.sgztech.rastreamento.util.CodeUtil.isValid
 import com.sgztech.rastreamento.util.GoogleSignInUtil.getAccount
 import com.sgztech.rastreamento.util.SnackBarUtil.show
@@ -119,7 +119,7 @@ class TrackFragment : Fragment() {
     }
 
     private fun setupEtCode() {
-        etCode.filters = arrayOf<InputFilter>(InputFilter.AllCaps())
+        etCode.filters = filter(requireContext())
         etCode.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 // unnecessary implementation

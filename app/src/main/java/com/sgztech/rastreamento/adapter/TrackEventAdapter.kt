@@ -1,9 +1,11 @@
-package com.sgztech.rastreamento
+package com.sgztech.rastreamento.adapter
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
+import com.sgztech.rastreamento.R
+import com.sgztech.rastreamento.extension.toDatePtBr
 import com.sgztech.rastreamento.model.Track
 import kotlinx.android.synthetic.main.event_card_view.view.*
 
@@ -29,8 +31,7 @@ class TrackEventAdapter(
         fun bind(track: Track) {
             itemView.tvStatus.text = track.status
             itemView.tvLocal.text = track.locale
-            itemView.tvData.text = track.trackedAt
-            //itemView.tvData.text = track.trackedAt.toDate().toString()
+            itemView.tvData.text = track.trackedAt.toDatePtBr()
             itemView.tvObservacao.text = track.observation
         }
     }
