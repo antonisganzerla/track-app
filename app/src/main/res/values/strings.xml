@@ -8,7 +8,9 @@
     <!-- MainActivity -->
     <string name="toolbar_title_main">Rastrear Objeto</string>
     <string name="msg_enter_code">Informe um código!</string>
+    <string name="msg_enter_valid_code">Informe um código válido!</string>
     <string name="msg_search_error">Ocorreu um problema ao buscar as informações</string>
+    <string name="msg_search_error_not_found">Objeto não localizado na base dos correios</string>
     <string name="msg_search_fail">Falha ao buscar informações</string>
     <string name="msg_search_sucess">Informações recuperadas com sucesso</string>
     <string name="select_track_object">----- Objetos -----</string>

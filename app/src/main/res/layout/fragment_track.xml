@@ -1,6 +1,7 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    xmlns:tools="http://schemas.android.com/tools"
     android:background="@color/backgroundColor">
 
     <androidx.swiperefreshlayout.widget.SwipeRefreshLayout
@@ -19,7 +20,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
-                android:layout_marginTop="35dp" />
+                android:layout_marginTop="?actionBarSize" />
 
             <EditText
                 android:id="@+id/etCode"
@@ -45,24 +46,18 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="?actionBarSize"
-                android:visibility="invisible" />
+                android:visibility="gone" />
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/recycler_view_events"
+                android:scrollbars="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginTop="10dp"
+                tools:listitem="@layout/event_card_view"/>
 
         </LinearLayout>
     </androidx.swiperefreshlayout.widget.SwipeRefreshLayout>
-
-
-    <LinearLayout
-        android:layout_gravity="center_vertical"
-        android:layout_width="match_parent"
-        android:layout_marginTop="110dp"
-        android:layout_height="300dp">
-
-        <include
-            android:id="@+id/cardView"
-            layout="@layout/postal_object_card_view"
-            android:visibility="invisible" />
-
-    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fab"

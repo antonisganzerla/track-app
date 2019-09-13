@@ -4,6 +4,7 @@ package com.sgztech.rastreamento.view
 import android.content.Intent
 import android.os.Bundle
 import android.text.Editable
+import android.text.InputFilter
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
@@ -11,19 +12,19 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.sgztech.rastreamento.R
+import com.sgztech.rastreamento.TrackEventAdapter
 import com.sgztech.rastreamento.api.RetrofitInitializer
 import com.sgztech.rastreamento.core.CoreApplication
 import com.sgztech.rastreamento.extension.*
 import com.sgztech.rastreamento.model.PostalSearch
+import com.sgztech.rastreamento.model.Track
 import com.sgztech.rastreamento.model.TrackObject
+import com.sgztech.rastreamento.util.CodeUtil.isValid
 import com.sgztech.rastreamento.util.GoogleSignInUtil.getAccount
 import com.sgztech.rastreamento.util.SnackBarUtil.show
-import com.sgztech.rastreamento.util.SnackBarUtil.showShort
-import kotlinx.android.synthetic.main.event_card_view.view.*
 import kotlinx.android.synthetic.main.fragment_track.*
-import kotlinx.android.synthetic.main.postal_object_card_view.*
-import kotlinx.android.synthetic.main.postal_object_card_view.view.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.async
@@ -32,9 +33,6 @@ import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
-/**
- * A simple [Fragment] subclass.
- */
 class TrackFragment : Fragment() {
 
     override fun onCreateView(
@@ -52,9 +50,9 @@ class TrackFragment : Fragment() {
         setupBtnTrack()
         loadTrackObjects()
         swipe.setOnRefreshListener {
-            if(codeIsValid()){
+            if(isValid(etCode)){
                 swipe.visible()
-                cardView.gone()
+                recycler_view_events.gone()
                 sendRequest(etCode.text.toString())
             }else{
                 swipe.gone()
@@ -65,21 +63,12 @@ class TrackFragment : Fragment() {
     private fun setupBtnTrack() {
         btnTrack.setOnClickListener {
             requireActivity().hideKeyBoard(it)
-            if(codeIsValid()){
+            if(isValid(etCode)){
                 progressBar.visible()
-                cardView.gone()
+                recycler_view_events.gone()
                 sendRequest(etCode.text.toString())
             }
         }
-    }
-
-    private fun codeIsValid(): Boolean {
-        val code = etCode.text.toString()
-        if (code.isEmpty()) {
-            showShort(btnTrack, R.string.msg_enter_code)
-            return false
-        }
-        return true
     }
 
     private fun sendRequest(code: String) {
@@ -93,7 +82,12 @@ class TrackFragment : Fragment() {
                 swipe.isRefreshing = false
                 val postalSearch = response.body()
                 if (postalSearch == null) {
-                    show(btnTrack, R.string.msg_search_error)
+                    val errorBody = response.errorBody()
+                    if(errorBody != null){
+                        show(btnTrack, R.string.msg_search_error_not_found)
+                    }else{
+                        show(btnTrack, R.string.msg_search_error)
+                    }
                 } else {
                     loadDataOnView(postalSearch)
                     show(btnTrack, R.string.msg_search_sucess)
@@ -112,17 +106,7 @@ class TrackFragment : Fragment() {
     }
 
     private fun loadDataOnView(postalSearch: PostalSearch) {
-        cardView.tvCategoria.text = postalSearch.code
-        panelCard.removeAllViews()
-        for (track in postalSearch.data.tracks) {
-            val eventCardView = layoutInflater.inflate(R.layout.event_card_view, null)
-            eventCardView.tvStatus.text = track.status
-            eventCardView.tvLocal.text = track.locale
-            eventCardView.tvData.text = track.trackedAt
-            eventCardView.tvObservacao.text = track.observation
-            panelCard.addView(eventCardView)
-        }
-        cardView.visible()
+        setupRecyclerView(postalSearch.data.tracks.toMutableList().asReversed())
     }
 
     private fun setupFab() {
@@ -135,6 +119,7 @@ class TrackFragment : Fragment() {
     }
 
     private fun setupEtCode() {
+        etCode.filters = arrayOf<InputFilter>(InputFilter.AllCaps())
         etCode.addTextChangedListener(object : TextWatcher {
             override fun afterTextChanged(s: Editable?) {
                 // unnecessary implementation
@@ -206,7 +191,7 @@ class TrackFragment : Fragment() {
         data?.let {
             if (requestCode == REQUEST_CODE && data.getBooleanExtra(HAS_CHANGE, false)) {
                 loadTrackObjects()
-                cardView.gone()
+                recycler_view_events.gone()
             }
         }
     }
@@ -219,6 +204,15 @@ class TrackFragment : Fragment() {
                 ""
             }
         }
+    }
+
+    private fun setupRecyclerView(tracks: MutableList<Track>) {
+        recycler_view_events.let {
+            it.adapter = TrackEventAdapter(tracks)
+            it.layoutManager = LinearLayoutManager(activity)
+            it.setHasFixedSize(true)
+        }
+        recycler_view_events.visible()
     }
 
     companion object {

@@ -3,6 +3,7 @@ package com.sgztech.rastreamento.view
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.text.InputFilter
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -95,7 +96,7 @@ class TrackObjectListActivity : AppCompatActivity() {
 
     private fun setupDialog() {
         dialogView.btnSaveTrackObjet.setOnClickListener {
-            if (dialogView.etName.validate() && dialogView.etCode.validate()) {
+            if (dialogView.etName.validate() && dialogView.etCode.validate(true)) {
                 saveTrackObject(
                     dialogView.etName.text.toString(),
                     dialogView.etCode.text.toString()
@@ -103,6 +104,7 @@ class TrackObjectListActivity : AppCompatActivity() {
                 dialog.dismiss()
             }
         }
+        dialogView.etCode.filters = arrayOf<InputFilter>(InputFilter.AllCaps())
     }
 
     private fun setupFab() {

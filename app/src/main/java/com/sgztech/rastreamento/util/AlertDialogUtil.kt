@@ -10,7 +10,6 @@ object AlertDialogUtil {
     /**
      * builder with only positive callback
      */
-    @JvmStatic
     fun create(
         context: Context,
         resourceMessage: Int,
