@@ -22,8 +22,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".view.TrackObjectListActivity" />
-        <activity android:name=".view.MainActivity"/>
+        <activity
+            android:name=".view.TrackObjectListActivity"
+            android:screenOrientation="portrait" />
+        <activity
+            android:name=".view.MainActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>
