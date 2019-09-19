@@ -10,13 +10,15 @@ object SnackBarUtil{
         Snackbar.make(view, resourceMessage, Snackbar.LENGTH_LONG).show()
     }
 
-
     fun show(view: View, message: String){
         Snackbar.make(view, message, Snackbar.LENGTH_LONG).show()
     }
 
-    @JvmStatic
     fun showShort(view: View, @StringRes resourceMessage: Int){
         Snackbar.make(view, resourceMessage, Snackbar.LENGTH_SHORT).show()
+    }
+
+    fun showShort(view: View, message: String){
+        Snackbar.make(view, message, Snackbar.LENGTH_SHORT).show()
     }
 }

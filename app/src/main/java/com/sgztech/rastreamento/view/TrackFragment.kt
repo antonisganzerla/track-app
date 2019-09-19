@@ -12,6 +12,8 @@ import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.sgztech.rastreamento.R
 import com.sgztech.rastreamento.adapter.TrackEventAdapter
 import com.sgztech.rastreamento.api.RetrofitInitializer
@@ -49,12 +51,23 @@ class TrackFragment : Fragment() {
         setupFab()
         setupBtnTrack()
         loadTrackObjects()
+        setupSwipe()
+        setupAds()
+    }
+
+    private fun setupAds() {
+        MobileAds.initialize(requireContext())
+        val adRequest = AdRequest.Builder().addTestDevice(getString(R.string.test_device)).build()
+        adView.loadAd(adRequest)
+    }
+
+    private fun setupSwipe() {
         swipe.setOnRefreshListener {
-            if(isValid(etCode)){
+            if (isValid(etCode, textInputLayout)) {
                 swipe.visible()
                 recycler_view_events.gone()
                 sendRequest(etCode.text.toString())
-            }else{
+            } else {
                 swipe.gone()
             }
         }
@@ -63,7 +76,7 @@ class TrackFragment : Fragment() {
     private fun setupBtnTrack() {
         btnTrack.setOnClickListener {
             requireActivity().hideKeyBoard(it)
-            if(isValid(etCode)){
+            if(isValid(etCode, textInputLayout)){
                 progressBar.visible()
                 recycler_view_events.gone()
                 sendRequest(etCode.text.toString())

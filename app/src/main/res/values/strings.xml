@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Rastreamento</string>
+    <string name="app_name">Rastreador App</string>
 
     <!-- LoginActivity -->
     <string name="msg_signin_success">signInResult:success -> %1$s.</string>
@@ -66,5 +66,7 @@
     <string name="menu_item_about">Sobre o app</string>
     <string name="menu_item_logout">Sair</string>
     <string name="menu_title_mainly">Menu</string>
+
+    <string name="test_device">03558ABDB5300C4F9DC904FEE5B859B8</string>
 
 </resources>

@@ -3,10 +3,15 @@ package com.sgztech.rastreamento.view
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.InterstitialAd
+import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.sgztech.rastreamento.R
 import com.sgztech.rastreamento.adapter.TrackObjectAdapter
@@ -34,6 +39,7 @@ class TrackObjectListActivity : AppCompatActivity() {
     private val account: GoogleSignInAccount? by lazy {
         getAccount(applicationContext)
     }
+    private lateinit var mInterstitialAd: InterstitialAd
 
     private val dialog: AlertDialog by lazy {
         AlertDialogUtil.buildCustomDialog(
@@ -52,6 +58,33 @@ class TrackObjectListActivity : AppCompatActivity() {
         loadData()
         setupDialog()
         setupFab()
+        setupAds()
+    }
+
+    private fun showAd() {
+        if (mInterstitialAd.isLoaded) {
+            mInterstitialAd.show()
+        } else {
+            Log.d("Ads", "The interstitial wasn't loaded yet.")
+        }
+    }
+
+    private fun setupAds() {
+        MobileAds.initialize(this)
+        mInterstitialAd = InterstitialAd(this)
+        mInterstitialAd.adUnitId = "ca-app-pub-9764822217711668/1366822331"
+        loadAds()
+        mInterstitialAd.adListener = object : AdListener() {
+
+            override fun onAdClosed(){
+                Log.d("Ads", "loaded new ads")
+                loadAds()
+            }
+        }
+    }
+
+    private fun loadAds() {
+        mInterstitialAd.loadAd(AdRequest.Builder().addTestDevice(getString(R.string.test_device)).build())
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -96,7 +129,9 @@ class TrackObjectListActivity : AppCompatActivity() {
 
     private fun setupDialog() {
         dialogView.btnSaveTrackObjet.setOnClickListener {
-            if (dialogView.etName.validate() && dialogView.etCode.validate(true)) {
+            if (dialogView.etName.validate(textInputLayout = dialogView.textInputLayoutName) &&
+                dialogView.etCode.validate(true, dialogView.textInputLayoutCode)
+            ) {
                 saveTrackObject(
                     dialogView.etName.text.toString(),
                     dialogView.etCode.text.toString()
@@ -110,6 +145,7 @@ class TrackObjectListActivity : AppCompatActivity() {
     private fun setupFab() {
         fab_list_code.setOnClickListener {
             dialog.show()
+            showAd()
         }
     }
 

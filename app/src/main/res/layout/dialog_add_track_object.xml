@@ -1,33 +1,45 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    style="@style/TextAppearance.AppCompat.Medium"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    style="@style/TextAppearance.AppCompat.Medium"
+    android:orientation="vertical"
     android:padding="25dp">
 
-    <EditText
-        android:id="@+id/etName"
-        android:hint="@string/dialog_et_track_object_name"
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutName"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:maxLength="@integer/max_length_object_name"
-        android:layout_marginBottom="10dp"/>
+        android:layout_height="wrap_content">
 
-    <EditText
-        android:id="@+id/etCode"
-        android:hint="@string/dialog_et_track_object_code"
+        <EditText
+            android:id="@+id/etName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="10dp"
+            android:hint="@string/dialog_et_track_object_name"
+            android:maxLength="@integer/max_length_object_name" />
+
+    </com.google.android.material.textfield.TextInputLayout>
+
+    <com.google.android.material.textfield.TextInputLayout
+        android:id="@+id/textInputLayoutCode"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
+        android:layout_height="wrap_content">
+
+        <EditText
+            android:id="@+id/etCode"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="@string/dialog_et_track_object_code" />
+    </com.google.android.material.textfield.TextInputLayout>
 
     <Button
         android:id="@+id/btnSaveTrackObjet"
+        style="@style/Widget.AppCompat.Button.Colored"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_margin="10dp"
         android:layout_gravity="center"
-        style="@style/Widget.AppCompat.Button.Colored"
-        android:text="@string/dialog_save"/>
+        android:layout_margin="10dp"
+        android:text="@string/dialog_save" />
 
 </LinearLayout>
