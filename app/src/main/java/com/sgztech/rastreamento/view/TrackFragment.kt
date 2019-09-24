@@ -57,7 +57,7 @@ class TrackFragment : Fragment() {
 
     private fun setupAds() {
         MobileAds.initialize(requireContext())
-        val adRequest = AdRequest.Builder().addTestDevice(getString(R.string.test_device)).build()
+        val adRequest = AdRequest.Builder().build()
         adView.loadAd(adRequest)
     }
 

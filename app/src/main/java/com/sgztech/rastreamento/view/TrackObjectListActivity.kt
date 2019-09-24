@@ -84,7 +84,7 @@ class TrackObjectListActivity : AppCompatActivity() {
     }
 
     private fun loadAds() {
-        mInterstitialAd.loadAd(AdRequest.Builder().addTestDevice(getString(R.string.test_device)).build())
+        mInterstitialAd.loadAd(AdRequest.Builder().build())
     }
 
     override fun onSupportNavigateUp(): Boolean {

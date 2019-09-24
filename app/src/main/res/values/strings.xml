@@ -4,6 +4,7 @@
     <!-- LoginActivity -->
     <string name="msg_signin_success">signInResult:success -> %1$s.</string>
     <string name="msg_signin_fail">signInResult:failed code= %1$s.</string>
+    <string name="msg_signin_fail_snack_bar">Não foi possível efetuar login.</string>
 
     <!-- MainActivity -->
     <string name="toolbar_title_main">Rastrear Objeto</string>
@@ -66,7 +67,5 @@
     <string name="menu_item_about">Sobre o app</string>
     <string name="menu_item_logout">Sair</string>
     <string name="menu_title_mainly">Menu</string>
-
-    <string name="test_device">03558ABDB5300C4F9DC904FEE5B859B8</string>
 
 </resources>
