@@ -3,6 +3,7 @@ package com.sgztech.rastreamento.util
 import android.content.Context
 import android.text.InputFilter
 import android.widget.EditText
+import com.google.android.material.textfield.TextInputLayout
 import com.sgztech.rastreamento.R
 import com.sgztech.rastreamento.extension.matchCode
 
@@ -11,16 +12,23 @@ object CodeUtil {
     /**
      * builder with only positive callback
      */
-    fun isValid(editText: EditText): Boolean{
+    fun isValid(editText: EditText, textInputLayout: TextInputLayout): Boolean{
         val code = editText.text.toString()
+        textInputLayout.isErrorEnabled = true
         if (code.isEmpty()) {
-            SnackBarUtil.showShort(editText, R.string.msg_enter_code)
+            val msg = editText.context.getString(R.string.msg_enter_code)
+            SnackBarUtil.showShort(editText, msg)
+            textInputLayout.error = msg
             return false
         }
         if(!code.matchCode()){
+            val msg = editText.context.getString(R.string.msg_enter_valid_code)
             SnackBarUtil.showShort(editText, R.string.msg_enter_valid_code)
+            textInputLayout.error = msg
             return false
         }
+        textInputLayout.error = ""
+        textInputLayout.isErrorEnabled = false
         return true
     }
 

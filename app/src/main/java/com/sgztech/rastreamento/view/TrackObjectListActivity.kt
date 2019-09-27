@@ -3,28 +3,33 @@ package com.sgztech.rastreamento.view
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.ads.AdListener
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.InterstitialAd
+import com.google.android.gms.ads.MobileAds
 import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.sgztech.rastreamento.R
 import com.sgztech.rastreamento.adapter.TrackObjectAdapter
-import com.sgztech.rastreamento.core.CoreApplication
+import com.sgztech.rastreamento.extension.gone
 import com.sgztech.rastreamento.extension.validate
+import com.sgztech.rastreamento.extension.visible
 import com.sgztech.rastreamento.model.TrackObject
 import com.sgztech.rastreamento.util.AlertDialogUtil
 import com.sgztech.rastreamento.util.CodeUtil.filter
 import com.sgztech.rastreamento.util.GoogleSignInUtil.getAccount
 import com.sgztech.rastreamento.util.SnackBarUtil.show
 import com.sgztech.rastreamento.view.TrackFragment.Companion.HAS_CHANGE
+import com.sgztech.rastreamento.viewmodel.TrackObjectViewModel
 import kotlinx.android.synthetic.main.activity_track_object_list.*
 import kotlinx.android.synthetic.main.dialog_add_track_object.view.*
 import kotlinx.android.synthetic.main.toolbar.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 
 class TrackObjectListActivity : AppCompatActivity() {
 
@@ -34,6 +39,7 @@ class TrackObjectListActivity : AppCompatActivity() {
     private val account: GoogleSignInAccount? by lazy {
         getAccount(applicationContext)
     }
+    private lateinit var mInterstitialAd: InterstitialAd
 
     private val dialog: AlertDialog by lazy {
         AlertDialogUtil.buildCustomDialog(
@@ -43,15 +49,45 @@ class TrackObjectListActivity : AppCompatActivity() {
         ).create()
     }
 
-    private lateinit var list: MutableList<TrackObject>
+    private val viewModel: TrackObjectViewModel by inject()
+    private lateinit var adapter: TrackObjectAdapter
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_track_object_list)
         setupToolbar()
+        setupAdapter()
+        setupRecyclerView()
         loadData()
         setupDialog()
         setupFab()
+        setupAds()
+    }
+
+    private fun showAd() {
+        if (mInterstitialAd.isLoaded) {
+            mInterstitialAd.show()
+        } else {
+            Log.d("Ads", "The interstitial wasn't loaded yet.")
+        }
+    }
+
+    private fun setupAds() {
+        MobileAds.initialize(this)
+        mInterstitialAd = InterstitialAd(this)
+        mInterstitialAd.adUnitId = "ca-app-pub-9764822217711668/1366822331"
+        loadAds()
+        mInterstitialAd.adListener = object : AdListener() {
+
+            override fun onAdClosed(){
+                Log.d("Ads", "loaded new ads")
+                loadAds()
+            }
+        }
+    }
+
+    private fun loadAds() {
+        mInterstitialAd.loadAd(AdRequest.Builder().build())
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -67,28 +103,25 @@ class TrackObjectListActivity : AppCompatActivity() {
     }
 
     private fun loadData() {
-        GlobalScope.launch(context = Dispatchers.Main) {
-            if (::list.isInitialized) {
-                list.clear()
+        viewModel.getAll(getUserId()).observe(
+            this, Observer {
+                adapter.setTrackObjects(it)
+                setupListVisibility(it)
             }
-            list = loadCodeList()
-            setupRecyclerView()
-        }
+        )
     }
 
-    private suspend fun loadCodeList(): MutableList<TrackObject> {
-        val result = GlobalScope.async {
-            val dao = CoreApplication.database?.trackObjectDao()
-            dao?.allByUser(getUserId())
+    private fun setupAdapter(){
+        adapter = TrackObjectAdapter{ trackObject ->
+            viewModel.delete(trackObject)
+            show(recycler_view_code_item, R.string.msg_track_object_deleted)
+            setupExtra()
         }
-        return result.await()?.toMutableList() ?: mutableListOf()
     }
 
     private fun setupRecyclerView() {
         recycler_view_code_item.let {
-            it.adapter = TrackObjectAdapter(list) {
-                setupExtra()
-            }
+            it.adapter = adapter
             it.layoutManager = LinearLayoutManager(this)
             it.setHasFixedSize(true)
         }
@@ -96,11 +129,14 @@ class TrackObjectListActivity : AppCompatActivity() {
 
     private fun setupDialog() {
         dialogView.btnSaveTrackObjet.setOnClickListener {
-            if (dialogView.etName.validate() && dialogView.etCode.validate(true)) {
+            if (dialogView.etName.validate(textInputLayout = dialogView.textInputLayoutName) &&
+                dialogView.etCode.validate(true, dialogView.textInputLayoutCode)
+            ) {
                 saveTrackObject(
                     dialogView.etName.text.toString(),
                     dialogView.etCode.text.toString()
                 )
+                cleanFieldsDialog()
                 dialog.dismiss()
             }
         }
@@ -110,18 +146,14 @@ class TrackObjectListActivity : AppCompatActivity() {
     private fun setupFab() {
         fab_list_code.setOnClickListener {
             dialog.show()
+            showAd()
         }
     }
 
     private fun saveTrackObject(name: String, code: String) {
         val trackObject = TrackObject(name = name, code = code, idUser = getUserId())
-        GlobalScope.launch {
-            val dao = CoreApplication.database?.trackObjectDao()
-            dao?.add(trackObject)
-        }
-        loadData()
+        viewModel.insert(trackObject)
         show(recycler_view_code_item, R.string.msg_track_object_saved)
-        cleanFieldsDialog()
         setupExtra()
     }
 
@@ -134,6 +166,16 @@ class TrackObjectListActivity : AppCompatActivity() {
     private fun cleanFieldsDialog() {
         dialogView.etName.setText("")
         dialogView.etCode.setText("")
+    }
+
+    private fun setupListVisibility(list: List<TrackObject>) {
+        if (list.isEmpty()) {
+            recycler_view_code_item.gone()
+            panel_empty_list.visible()
+        } else {
+            recycler_view_code_item.visible()
+            panel_empty_list.gone()
+        }
     }
 
     private fun getUserId(): String {

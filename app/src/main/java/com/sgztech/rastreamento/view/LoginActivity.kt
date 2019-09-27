@@ -11,6 +11,7 @@ import com.sgztech.rastreamento.R
 import com.sgztech.rastreamento.extension.openActivity
 import com.sgztech.rastreamento.extension.showLog
 import com.sgztech.rastreamento.util.GoogleSignInUtil.googleSignInClient
+import com.sgztech.rastreamento.util.SnackBarUtil.show
 import kotlinx.android.synthetic.main.activity_login.*
 
 class LoginActivity : AppCompatActivity() {
@@ -52,7 +53,7 @@ class LoginActivity : AppCompatActivity() {
             openMainActivity()
         } catch (e: ApiException) {
             showLog(getString(R.string.msg_signin_fail, e.statusCode.toString()))
-            showLog(getString(R.string.msg_signin_fail, e))
+            show(sign_in_button, R.string.msg_signin_fail_snack_bar)
             // verificar conexão com a internet;
         }
     }

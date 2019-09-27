@@ -11,29 +11,30 @@ import android.view.ViewGroup
 import android.widget.AdapterView
 import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.google.android.gms.ads.AdRequest
+import com.google.android.gms.ads.MobileAds
 import com.sgztech.rastreamento.R
 import com.sgztech.rastreamento.adapter.TrackEventAdapter
 import com.sgztech.rastreamento.api.RetrofitInitializer
-import com.sgztech.rastreamento.core.CoreApplication
 import com.sgztech.rastreamento.extension.*
 import com.sgztech.rastreamento.model.PostalSearch
 import com.sgztech.rastreamento.model.Track
-import com.sgztech.rastreamento.model.TrackObject
 import com.sgztech.rastreamento.util.CodeUtil.filter
 import com.sgztech.rastreamento.util.CodeUtil.isValid
 import com.sgztech.rastreamento.util.GoogleSignInUtil.getAccount
 import com.sgztech.rastreamento.util.SnackBarUtil.show
+import com.sgztech.rastreamento.viewmodel.TrackObjectViewModel
 import kotlinx.android.synthetic.main.fragment_track.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.async
-import kotlinx.coroutines.launch
+import org.koin.android.ext.android.inject
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 
 class TrackFragment : Fragment() {
+
+    private val viewModel: TrackObjectViewModel by inject()
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -49,12 +50,23 @@ class TrackFragment : Fragment() {
         setupFab()
         setupBtnTrack()
         loadTrackObjects()
+        setupSwipe()
+        setupAds()
+    }
+
+    private fun setupAds() {
+        MobileAds.initialize(requireContext())
+        val adRequest = AdRequest.Builder().build()
+        adView.loadAd(adRequest)
+    }
+
+    private fun setupSwipe() {
         swipe.setOnRefreshListener {
-            if(isValid(etCode)){
+            if (isValid(etCode, textInputLayout)) {
                 swipe.visible()
                 recycler_view_events.gone()
                 sendRequest(etCode.text.toString())
-            }else{
+            } else {
                 swipe.gone()
             }
         }
@@ -63,7 +75,7 @@ class TrackFragment : Fragment() {
     private fun setupBtnTrack() {
         btnTrack.setOnClickListener {
             requireActivity().hideKeyBoard(it)
-            if(isValid(etCode)){
+            if(isValid(etCode, textInputLayout)){
                 progressBar.visible()
                 recycler_view_events.gone()
                 sendRequest(etCode.text.toString())
@@ -163,8 +175,8 @@ class TrackFragment : Fragment() {
     }
 
     private fun loadTrackObjects() {
-        GlobalScope.launch(context = Dispatchers.Main) {
-            val trackObjectList = loadCodeList()
+
+        viewModel.getAll(getUserId()).observe(this, Observer { trackObjectList ->
             val list = mutableListOf<String>()
             list.add(getString(R.string.select_track_object))
             for (trackObject in trackObjectList) {
@@ -175,15 +187,7 @@ class TrackFragment : Fragment() {
                 R.layout.track_object_list_item,
                 list
             )
-        }
-    }
-
-    private suspend fun loadCodeList(): MutableList<TrackObject> {
-        val result = GlobalScope.async {
-            val dao = CoreApplication.database?.trackObjectDao()
-            dao?.allByUser(getUserId())
-        }
-        return result.await()?.toMutableList() ?: mutableListOf()
+        })
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

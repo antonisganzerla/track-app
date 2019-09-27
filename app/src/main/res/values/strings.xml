@@ -1,9 +1,10 @@
 <resources>
-    <string name="app_name">Rastreamento</string>
+    <string name="app_name">Rastreador App</string>
 
     <!-- LoginActivity -->
     <string name="msg_signin_success">signInResult:success -> %1$s.</string>
     <string name="msg_signin_fail">signInResult:failed code= %1$s.</string>
+    <string name="msg_signin_fail_snack_bar">Não foi possível efetuar login.</string>
 
     <!-- MainActivity -->
     <string name="toolbar_title_main">Rastrear Objeto</string>
@@ -46,6 +47,7 @@
     <string name="toolbar_title_object_track">Objetos cadastrados</string>
     <string name="tv_example_code">LB083028640SG</string>
     <string name="msg_track_object_saved">Objeto criado com sucesso</string>
+    <string name="check_list_empty">Você não possui objetos cadastrados</string>
 
     <!-- TrackObjectAdapter -->
     <string name="msg_delete_track_object">Deseja excluir o objeto?</string>
