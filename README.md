@@ -6,4 +6,7 @@
 * Coroutines
 * Retrofit
 * Picasso
+* Koin
+* ViewModel
+* LiveData
 * Material Design Components
