@@ -1,5 +1,6 @@
 package com.sgztech.rastreamento.dao
 
+import androidx.lifecycle.LiveData
 import androidx.room.*
 import com.sgztech.rastreamento.model.TrackObject
 
@@ -7,7 +8,7 @@ import com.sgztech.rastreamento.model.TrackObject
 interface TrackObjectDao {
 
     @Query("SELECT * FROM TrackObject WHERE idUser LIKE :idUser")
-    fun allByUser(idUser: String): List<TrackObject>
+    fun allByUser(idUser: String): LiveData<List<TrackObject>>
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     fun add(vararg trackObject: TrackObject)

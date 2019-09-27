@@ -47,6 +47,7 @@
     <string name="toolbar_title_object_track">Objetos cadastrados</string>
     <string name="tv_example_code">LB083028640SG</string>
     <string name="msg_track_object_saved">Objeto criado com sucesso</string>
+    <string name="check_list_empty">Você não possui objetos cadastrados</string>
 
     <!-- TrackObjectAdapter -->
     <string name="msg_delete_track_object">Deseja excluir o objeto?</string>

@@ -6,18 +6,16 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.sgztech.rastreamento.R
-import com.sgztech.rastreamento.core.CoreApplication
 import com.sgztech.rastreamento.model.TrackObject
 import com.sgztech.rastreamento.util.AlertDialogUtil
-import com.sgztech.rastreamento.util.SnackBarUtil
 import kotlinx.android.synthetic.main.track_object_card_view.view.*
-import kotlinx.coroutines.GlobalScope
-import kotlinx.coroutines.launch
 
 class TrackObjectAdapter(
-    private val list: MutableList<TrackObject>,
-    private val callBack: () -> Unit
+    private val deleteCallback: (trackObject: TrackObject) -> Unit
 ) : RecyclerView.Adapter<TrackObjectAdapter.TrackObjectViewHolder>() {
+
+    private var list: List<TrackObject> = ArrayList()
+
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackObjectViewHolder {
         val view = LayoutInflater.from(parent.context)
             .inflate(R.layout.track_object_card_view, parent, false)
@@ -30,6 +28,11 @@ class TrackObjectAdapter(
 
     override fun onBindViewHolder(holder: TrackObjectViewHolder, position: Int) {
         holder.bind(list[position], position)
+    }
+
+    fun setTrackObjects(trackObjects: List<TrackObject>) {
+        this.list = trackObjects
+        notifyDataSetChanged()
     }
 
 
@@ -48,18 +51,8 @@ class TrackObjectAdapter(
                 context,
                 R.string.msg_delete_track_object
             ) {
-                deleteObject(trackObject)
-                list.remove(trackObject)
+                deleteCallback(trackObject)
                 notifyItemRemoved(position)
-                SnackBarUtil.show(itemView, R.string.msg_track_object_deleted)
-                callBack()
-            }
-        }
-
-        private fun deleteObject(trackObject: TrackObject) {
-            GlobalScope.launch {
-                val dao = CoreApplication.database?.trackObjectDao()
-                dao?.delete(trackObject)
             }
         }
     }
