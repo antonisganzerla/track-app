@@ -13,7 +13,6 @@ import com.google.android.gms.ads.AdListener
 import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.InterstitialAd
 import com.google.android.gms.ads.MobileAds
-import com.google.android.gms.auth.api.signin.GoogleSignInAccount
 import com.sgztech.rastreamento.R
 import com.sgztech.rastreamento.adapter.TrackObjectAdapter
 import com.sgztech.rastreamento.extension.gone
@@ -22,7 +21,7 @@ import com.sgztech.rastreamento.extension.visible
 import com.sgztech.rastreamento.model.TrackObject
 import com.sgztech.rastreamento.util.AlertDialogUtil
 import com.sgztech.rastreamento.util.CodeUtil.filter
-import com.sgztech.rastreamento.util.GoogleSignInUtil.getAccount
+import com.sgztech.rastreamento.util.PreferenceUtil.getUserId
 import com.sgztech.rastreamento.util.SnackBarUtil.show
 import com.sgztech.rastreamento.view.TrackFragment.Companion.HAS_CHANGE
 import com.sgztech.rastreamento.viewmodel.TrackObjectViewModel
@@ -35,9 +34,6 @@ class TrackObjectListActivity : AppCompatActivity() {
 
     private val dialogView: View by lazy {
         layoutInflater.inflate(R.layout.dialog_add_track_object, null)
-    }
-    private val account: GoogleSignInAccount? by lazy {
-        getAccount(applicationContext)
     }
     private lateinit var mInterstitialAd: InterstitialAd
 
@@ -103,7 +99,7 @@ class TrackObjectListActivity : AppCompatActivity() {
     }
 
     private fun loadData() {
-        viewModel.getAll(getUserId()).observe(
+        viewModel.getAll(userId()).observe(
             this, Observer {
                 adapter.setTrackObjects(it)
                 setupListVisibility(it)
@@ -151,7 +147,7 @@ class TrackObjectListActivity : AppCompatActivity() {
     }
 
     private fun saveTrackObject(name: String, code: String) {
-        val trackObject = TrackObject(name = name, code = code, idUser = getUserId())
+        val trackObject = TrackObject(name = name, code = code, idUser = userId())
         viewModel.insert(trackObject)
         show(recycler_view_code_item, R.string.msg_track_object_saved)
         setupExtra()
@@ -178,13 +174,7 @@ class TrackObjectListActivity : AppCompatActivity() {
         }
     }
 
-    private fun getUserId(): String {
-        return account.let {
-            if (it != null && it.id != null) {
-                it.id!!
-            } else {
-                ""
-            }
-        }
+    private fun userId(): String {
+        return getUserId(applicationContext)
     }
 }

@@ -23,6 +23,9 @@
     <string name="dialog_message_logout">Deseja realmente efetuar o logout?</string>
     <string name="dialog_about_app_title">Sobre o app</string>
     <string name="dialog_about_app_message">Aplicativo para rastreio de objetos dos Correios.\n\n Desenvolvido por Antoni Sganzerla.</string>
+    <string name="app_store_details">Confira o aplicativo Rastreador App \n </string>
+    <string name="app_store_url">https://play.google.com/store/apps/details?id=com.sgztech.rastreamento</string>
+    <string name="msg_store_app_not_found">Não foi possível abrir a loja de aplicativos.</string>
 
     <!-- track_object_list_item -->
     <string name="et_example">Exemplo</string>
@@ -66,6 +69,8 @@
     <!-- Menu item drawer -->
     <string name="menu_item_title">Ajuda</string>
     <string name="menu_item_about">Sobre o app</string>
+    <string name="menu_item_rate">Avaliar</string>
+    <string name="menu_item_share">Compartilhar</string>
     <string name="menu_item_logout">Sair</string>
     <string name="menu_title_mainly">Menu</string>
 

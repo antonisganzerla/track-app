@@ -11,6 +11,7 @@ import com.sgztech.rastreamento.R
 import com.sgztech.rastreamento.extension.openActivity
 import com.sgztech.rastreamento.extension.showLog
 import com.sgztech.rastreamento.util.GoogleSignInUtil.googleSignInClient
+import com.sgztech.rastreamento.util.PreferenceUtil.setUserId
 import com.sgztech.rastreamento.util.SnackBarUtil.show
 import kotlinx.android.synthetic.main.activity_login.*
 
@@ -49,7 +50,10 @@ class LoginActivity : AppCompatActivity() {
     private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>) {
         try {
             val account = completedTask.getResult(ApiException::class.java)
-            showLog(getString(R.string.msg_signin_success, account?.displayName))
+            account?.let {
+                showLog(getString(R.string.msg_signin_success, account.displayName))
+                setUserId(applicationContext, account.id!!)
+            }
             openMainActivity()
         } catch (e: ApiException) {
             showLog(getString(R.string.msg_signin_fail, e.statusCode.toString()))

@@ -1,5 +1,8 @@
 package com.sgztech.rastreamento.view
 
+import android.content.ActivityNotFoundException
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
 import androidx.appcompat.app.ActionBarDrawerToggle
 import androidx.appcompat.app.AppCompatActivity
@@ -10,6 +13,7 @@ import com.sgztech.rastreamento.extension.openActivity
 import com.sgztech.rastreamento.util.AlertDialogUtil
 import com.sgztech.rastreamento.util.GoogleSignInUtil.getAccount
 import com.sgztech.rastreamento.util.GoogleSignInUtil.signOut
+import com.sgztech.rastreamento.util.SnackBarUtil.show
 import com.squareup.picasso.Picasso
 import kotlinx.android.synthetic.main.activity_main.*
 import kotlinx.android.synthetic.main.nav_header.view.*
@@ -50,6 +54,12 @@ class MainActivity : AppCompatActivity() {
                 R.id.nav_item_logout -> {
                     showDialogLogout()
                 }
+                R.id.nav_item_rate -> {
+                    rateApp()
+                }
+                R.id.nav_item_share -> {
+                    shareApp()
+                }
                 R.id.nav_item_about -> {
                     AlertDialogUtil.showSimpleDialog(
                         this,
@@ -84,6 +94,27 @@ class MainActivity : AppCompatActivity() {
             it.nav_header_name.text = account?.displayName
             it.nav_header_email.text = account?.email
             Picasso.get().load(account?.photoUrl).into(it.nav_header_imageView)
+        }
+    }
+
+    private fun rateApp() {
+        val uri = Uri.parse(getString(R.string.app_store_url))
+        val intent = Intent(Intent.ACTION_VIEW, uri)
+        try {
+            startActivity(intent)
+        } catch (exception: ActivityNotFoundException) {
+            show(toolbar, R.string.msg_store_app_not_found)
+        }
+    }
+
+    private fun shareApp() {
+        val intent = Intent(Intent.ACTION_SEND)
+        val msg = getString(R.string.app_store_details).plus(getString(R.string.app_store_url))
+        intent.putExtra(Intent.EXTRA_TEXT, msg)
+        intent.type = "text/plain"
+
+        if (intent.resolveActivity(packageManager) != null) {
+            startActivity(intent)
         }
     }
 

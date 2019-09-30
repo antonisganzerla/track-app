@@ -23,7 +23,7 @@ import com.sgztech.rastreamento.model.PostalSearch
 import com.sgztech.rastreamento.model.Track
 import com.sgztech.rastreamento.util.CodeUtil.filter
 import com.sgztech.rastreamento.util.CodeUtil.isValid
-import com.sgztech.rastreamento.util.GoogleSignInUtil.getAccount
+import com.sgztech.rastreamento.util.PreferenceUtil.getUserId
 import com.sgztech.rastreamento.util.SnackBarUtil.show
 import com.sgztech.rastreamento.viewmodel.TrackObjectViewModel
 import kotlinx.android.synthetic.main.fragment_track.*
@@ -176,7 +176,7 @@ class TrackFragment : Fragment() {
 
     private fun loadTrackObjects() {
 
-        viewModel.getAll(getUserId()).observe(this, Observer { trackObjectList ->
+        viewModel.getAll(userId()).observe(this, Observer { trackObjectList ->
             val list = mutableListOf<String>()
             list.add(getString(R.string.select_track_object))
             for (trackObject in trackObjectList) {
@@ -200,14 +200,8 @@ class TrackFragment : Fragment() {
         }
     }
 
-    private fun getUserId(): String {
-        return getAccount(requireContext()).let {
-            if (it != null && it.id != null) {
-                it.id!!
-            } else {
-                ""
-            }
-        }
+    private fun userId(): String {
+        return getUserId(requireContext())
     }
 
     private fun setupRecyclerView(tracks: MutableList<Track>) {
