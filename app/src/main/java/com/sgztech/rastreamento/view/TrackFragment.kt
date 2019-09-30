@@ -13,14 +13,14 @@ import android.widget.ArrayAdapter
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.gms.ads.AdRequest
-import com.google.android.gms.ads.MobileAds
 import com.sgztech.rastreamento.R
 import com.sgztech.rastreamento.adapter.TrackEventAdapter
 import com.sgztech.rastreamento.api.RetrofitInitializer
 import com.sgztech.rastreamento.extension.*
 import com.sgztech.rastreamento.model.PostalSearch
 import com.sgztech.rastreamento.model.Track
+import com.sgztech.rastreamento.util.AdsUtil.init
+import com.sgztech.rastreamento.util.AdsUtil.setupBannerAd
 import com.sgztech.rastreamento.util.CodeUtil.filter
 import com.sgztech.rastreamento.util.CodeUtil.isValid
 import com.sgztech.rastreamento.util.PreferenceUtil.getUserId
@@ -55,9 +55,8 @@ class TrackFragment : Fragment() {
     }
 
     private fun setupAds() {
-        MobileAds.initialize(requireContext())
-        val adRequest = AdRequest.Builder().build()
-        adView.loadAd(adRequest)
+        init(requireContext())
+        setupBannerAd(adView)
     }
 
     private fun setupSwipe() {

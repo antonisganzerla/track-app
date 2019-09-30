@@ -3,22 +3,23 @@ package com.sgztech.rastreamento.view
 import android.app.Activity
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.google.android.gms.ads.AdListener
-import com.google.android.gms.ads.AdRequest
 import com.google.android.gms.ads.InterstitialAd
-import com.google.android.gms.ads.MobileAds
 import com.sgztech.rastreamento.R
 import com.sgztech.rastreamento.adapter.TrackObjectAdapter
 import com.sgztech.rastreamento.extension.gone
 import com.sgztech.rastreamento.extension.validate
 import com.sgztech.rastreamento.extension.visible
 import com.sgztech.rastreamento.model.TrackObject
+import com.sgztech.rastreamento.util.AdsUtil.ID_INTERSTICIAL_AD
+import com.sgztech.rastreamento.util.AdsUtil.buildIntersticialAd
+import com.sgztech.rastreamento.util.AdsUtil.init
+import com.sgztech.rastreamento.util.AdsUtil.setupBannerAd
+import com.sgztech.rastreamento.util.AdsUtil.showIntersticialAd
 import com.sgztech.rastreamento.util.AlertDialogUtil
 import com.sgztech.rastreamento.util.CodeUtil.filter
 import com.sgztech.rastreamento.util.PreferenceUtil.getUserId
@@ -60,30 +61,10 @@ class TrackObjectListActivity : AppCompatActivity() {
         setupAds()
     }
 
-    private fun showAd() {
-        if (mInterstitialAd.isLoaded) {
-            mInterstitialAd.show()
-        } else {
-            Log.d("Ads", "The interstitial wasn't loaded yet.")
-        }
-    }
-
     private fun setupAds() {
-        MobileAds.initialize(this)
-        mInterstitialAd = InterstitialAd(this)
-        mInterstitialAd.adUnitId = "ca-app-pub-9764822217711668/1366822331"
-        loadAds()
-        mInterstitialAd.adListener = object : AdListener() {
-
-            override fun onAdClosed(){
-                Log.d("Ads", "loaded new ads")
-                loadAds()
-            }
-        }
-    }
-
-    private fun loadAds() {
-        mInterstitialAd.loadAd(AdRequest.Builder().build())
+        init(applicationContext)
+        setupBannerAd(adView)
+        mInterstitialAd = buildIntersticialAd(applicationContext, ID_INTERSTICIAL_AD)
     }
 
     override fun onSupportNavigateUp(): Boolean {
@@ -142,7 +123,7 @@ class TrackObjectListActivity : AppCompatActivity() {
     private fun setupFab() {
         fab_list_code.setOnClickListener {
             dialog.show()
-            showAd()
+            showIntersticialAd(mInterstitialAd)
         }
     }
 
