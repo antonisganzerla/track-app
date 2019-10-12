@@ -19,8 +19,6 @@ import com.sgztech.rastreamento.api.RetrofitInitializer
 import com.sgztech.rastreamento.extension.*
 import com.sgztech.rastreamento.model.PostalSearch
 import com.sgztech.rastreamento.model.Track
-import com.sgztech.rastreamento.util.AdsUtil.init
-import com.sgztech.rastreamento.util.AdsUtil.setupBannerAd
 import com.sgztech.rastreamento.util.CodeUtil.filter
 import com.sgztech.rastreamento.util.CodeUtil.isValid
 import com.sgztech.rastreamento.util.PreferenceUtil.getUserId
@@ -51,12 +49,6 @@ class TrackFragment : Fragment() {
         setupBtnTrack()
         loadTrackObjects()
         setupSwipe()
-        setupAds()
-    }
-
-    private fun setupAds() {
-        init(requireContext())
-        setupBannerAd(adView)
     }
 
     private fun setupSwipe() {
